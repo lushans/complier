@@ -1,6 +1,5 @@
 #!venv/bin/python3
-import argparse
-import re
+import os
 import lexer
 import parse
 
@@ -15,14 +14,15 @@ import parse
 
 if __name__ == "__main__":
     #path = getarg()
-    fo = open('myc.c', "r")
+    try:
+        fo = open('myc.c', "r")
+    except IOError:
+        print("ERROR: FILE NOT FOUND!")
+        os._exit(0)
     lexer = lexer.main(fo)
     parse.main(lexer)
 
 
-
-
-    
 
 
 

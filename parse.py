@@ -7,7 +7,7 @@ def main(lexer):
     j = 0
     t = 1
     temp = "<程序>"
-    while j<len(lexer)-1:
+    while j<len(lexer):
         print(temp[i:])
         print(lexer[j].getValue())
         if temp == "<程序>":
@@ -55,30 +55,73 @@ def main(lexer):
                 t += 1
                 j += 1
         elif temp[i:i+6] == "<语句序列>":
-            if j+1 < len(lexer):
-                if  lexer[j+1].getValue() == "=":
+            if  lexer[j].getValue() != "}" and lexer[j].getValue() != ")":
                     temp = temp.replace("<语句序列>", "<语句><语句序列>", 1)
                     print("%d <语句序列>→<语句><语句序列>" % t)
                     t += 1
                     i -= 1
             else:
-                print("%d <语句序列>→<空>" % t)
-                t += 1
-                i -= 1
+                    temp = temp.replace("<语句序列>", "", 1)
+                    print("%d <语句序列>→<空>" % t)
+                    t += 1
+                    i -= 1
         elif temp[i:i+4] == "<语句>":
             if lexer[j+1].getValue() == "=":
                 temp = temp.replace("<语句>", "<赋值语句>", 1)
                 print("%d <语句>→<赋值语句>" % t)
                 t += 1
                 i -= 1
+            elif lexer[j].getValue() == "for":
+                temp = temp.replace("<语句>", "<for语句>", 1)
+                print("%d <语句>→<for语句>" % t)
+                t += 1
+                i -= 1
+            elif lexer[j].getValue() == "print":
+                temp = temp.replace("<语句>", "<print语句>", 1)
+                print("%d <语句>→<print语句>" % t)
+                t += 1
+                i -= 1
+        elif temp[i:i+7] == "<for语句>":
+            temp = temp.replace("<for语句>", "<for关键字>(<表达式>;<表达式>;<表达式>)<复合语句>", 1)
+            print("%d <for语句>→<for关键字>(<表达式>;<表达式>;<表达式>)<复合语句>" % t)
+            t += 1
+            i -= 1
+        elif temp[i:i+8] == "<for关键字>" and lexer[j].getValue() == "for":
+            temp = temp.replace("<for关键字>", "for", 1)
+            print("%d <for关键字>→for" % t)
+            t += 1
+            i += 2
+            j += 1
         elif temp[i:i+6] == "<赋值语句>":
             temp = temp.replace("<赋值语句>", "<表达式>;", 1)
             print("%d <赋值语句>→<表达式>;" % t)
             t += 1
             i -= 1
         elif temp[i:i+5] == "<表达式>":
-            temp = temp.replace("<表达式>", "<标识符>=<算数表达式>", 1)
-            print("%d <表达式>→<标识符>=<算数表达式>"%t)
+            if lexer[j+1].getValue() == "=" or lexer[j+1].getValue() == ")":
+                temp = temp.replace("<表达式>", "<标识符>=<算数表达式>", 1)
+                print("%d <表达式>→<标识符>=<算数表达式>"%t)
+                t += 1
+                i -= 1
+            elif lexer[j+1].getValue() == "<" or lexer[j+1].getValue() == ">":
+                temp = temp.replace("<表达式>", "<布尔表达式>", 1)
+                print("%d <表达式>→<布尔表达式>"%t)
+                t += 1
+                i -= 1
+        elif temp[i:i+7] == "<关系运算符>":
+            if lexer[j].getValue() == ">" or lexer[j].getValue() == "<":
+                temp = temp.replace("<关系运算符>", lexer[j].getValue(), 1)
+                print("%d <布尔表达式>→%s" %(t,lexer[j].getValue()))
+                t += 1
+                i -= 1
+        elif temp[i:i+6] == "<复合语句>":
+            temp = temp.replace("<复合语句>", "{<语句序列>}", 1)
+            print("%d  <复合语句>→{<语句序列>}" %t)
+            t += 1
+            i -= 1
+        elif temp[i:i+7] == "<布尔表达式>":
+            temp = temp.replace("<布尔表达式>", "<算数表达式><关系运算符><算数表达式>", 1)
+            print("%d <布尔表达式>→<算数表达式><关系运算符><算数表达式>" % t)
             t += 1
             i -= 1
         elif temp[i:i+7] == "<算数表达式>":
@@ -93,7 +136,7 @@ def main(lexer):
                 print(j)
                 t += 1
                 i -= 1
-            elif lexer[j+1].getValue() == ";":
+            elif lexer[j+1].getValue() == ";" or lexer[j+1].getValue() == "<" or lexer[j+1].getValue() == ")":
                 temp = temp.replace("<算数表达式>","<项>", 1)
                 print("%d <算数表达式>→<项>" % t)
                 t += 1
@@ -105,9 +148,10 @@ def main(lexer):
             i -= 1
         elif temp[i:i+4] == "<因子>":
             if lexer[j].getValue().isnumeric():
-                temp = temp.replace("<因子>", lexer[j].getValue(), 1)
+                temp = temp.replace("<因子>", "<无符号整数>", 1)
                 print("%d <因子>→<无符号整数>" % t)
                 t += 1
+                i += 6
                 j += 1
             else:
                 temp = temp.replace("<因子>", lexer[j].getValue(), 1)
@@ -119,7 +163,19 @@ def main(lexer):
             print("%d <标识符>→<字母>" % t)
             t += 1
             j += 1
-        elif temp[i] == ";" or temp[i] == ")" or temp[i] == "}" or temp[i] == "=" or temp[i] == "+":
+        elif temp[i:i+9] == "<print语句>":
+            temp = temp.replace("<print语句>", "<print关键字><算数表达式>;", 1)
+            print("%d <print语句>→<print关键字><表达式>;" % t)
+            t += 1
+            i -= 1
+        elif temp[i:i+10] == "<print关键字>":
+            if lexer[j].getValue() == "print":
+                temp = temp.replace("<print关键字>", "print", 1)
+                print("%d <print关键字>→print" % t)
+                t += 1
+                i += 4
+                j += 1
+        elif temp[i] == ";" or temp[i] == ")" or temp[i] == "}" or temp[i] == "=" or temp[i] == "+" or temp[i] == "(" or temp[i] == "<" or temp[i] == ">" or temp[i] == "{":
             if lexer[j].getValue() != temp[i]:
                 print("Error")
             else:

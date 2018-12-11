@@ -1,5 +1,23 @@
-from config.tokens import Tokens
 import re
+
+
+
+# Token类 存储
+class Tokens:
+    #定义构造方法 tokens字典 存储所有token和taken的tag
+    def __init__(self, tokens):
+        self.tokens = tokens
+    #判断字符串是否为token
+    def intokens(self,str):
+        if str in self.tokens.keys():
+            return True
+        else:
+            return False
+    #获得token的tag
+    def getTag(self,string):
+        return self.tokens[string]
+
+
 
 # 词法分析模块
 
@@ -21,8 +39,7 @@ keyword_tokens = {
     'else' : 'KW_ELSE',
     'for' : "KW_FOR",
     'return' : "KW_RETURN",
-    'cin' : "KW_CIN",
-    'cout' : "KW_COUT"
+    'print' : "KW_PRINT"
 }
 KW = Tokens(keyword_tokens)
 

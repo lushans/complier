@@ -1,7 +1,8 @@
-main()
-{
+main() {
     int a;
     int b;
-    a=1;
-    b = a + 1;
+    b = 10;
+    for(a=0;a<b;a=a+1) {
+        print a;
+    }
 }
