@@ -6,7 +6,8 @@ def main(lexer):
     i = 0
     j = 0
     t = 1
-    ## 将分析结果输出到控制台 并存入文件 ./output/lexer.txt
+    ## 将分析结果输出到控制台 并存入文件 ./output/parse.txt
+    print("语法分析开始......")
     out_parse = open("./output/parse.txt","w")
     temp = "<程序>"
     while j<len(lexer):
@@ -131,8 +132,8 @@ def main(lexer):
         elif temp[i:i+7] == "<关系运算符>":
             if lexer[j].getValue() == ">" or lexer[j].getValue() == "<":
                 temp = temp.replace("<关系运算符>", lexer[j].getValue(), 1)
-                print("%d <布尔表达式>→%s" % (t,lexer[j].getValue()))
-                print("%d <布尔表达式>→%s" % (t, lexer[j].getValue()),file=out_parse)
+                print("%d <关系运算符>→%s" % (t,lexer[j].getValue()))
+                print("%d <关系运算符>→%s" % (t, lexer[j].getValue()),file=out_parse)
                 t += 1
                 i -= 1
         elif temp[i:i+6] == "<复合语句>":
@@ -213,4 +214,4 @@ def main(lexer):
                 j += 1
         i += 1
         print("--------------------------------")
-
+    print("\n\n语法分析结束......")
