@@ -77,8 +77,8 @@ OP = Tokens(operato_tokens)
 # 子函数
 ## 判断 是否为运算符
 def op(source,index):
-    if source[index + 1] == "+" or source[index + 1] == "-" or source[index + 1] == "*" or source[index + 1] == "/" or \
-        source[index + 1] == ">" or source[index + 1] == "<" or source[index + 1] == "=" or source[index + 1] == "!":
+    if index < len(source) and (source[index + 1] == "+" or source[index + 1] == "-" or source[index + 1] == "*" or source[index + 1] == "/" or \
+        source[index + 1] == ">" or source[index + 1] == "<" or source[index + 1] == "=" or source[index + 1] == "!"):
         tokens.append(Token(OP.getTag(source[index:index + 2]),source[index:index + 2]))
         return index+1
     else:
@@ -92,7 +92,7 @@ def Bou(source, index):
 ## 判断 是否为数字
 def num(source,index):
     x = 1;
-    while '0' <= source[index+x] <= "9" or source == ".":
+    while index+x < len(source) and ('0' <= source[index+x] <= "9" or source == "."):
         x += 1;
     if "."  in source[index:index+x]:
         tokens.append(Token("NUM_FLOAT",source[index:index+x]))
@@ -103,8 +103,9 @@ def num(source,index):
 ## 判断 是否为关键字或标识符
 def kw(source,index):
     x = 1
-    while "0" <= source[index+x] <= "9" or source[index+x] == "_" or "a" <= source[index+x] <= "z" or "A" <= source[index+x] <= "Z":
+    while index+x < len(source) and ("0" <= source[index+x] <= "9" or source[index+x] == "_" or "a" <= source[index+x] <= "z" or "A" <= source[index+x] <= "Z"):
         x += 1
+    '查询是否为关键字，若 keyError 则说明不是关键字 存入标识符中'
     try:
         tokens.append(Token(KW.getTag(source[index:index+x]),source[index:index+x]))
     except KeyError:
@@ -113,9 +114,11 @@ def kw(source,index):
 
 
 def main(fo):
+    global tokens
+    global out_lexer
     print("开始词法分析......")
     index = 0
-    global tokens
+    t = 1
     tokens = []
     source = re.sub("\s+"," ",fo.read())
     while index < len(source):
@@ -132,7 +135,12 @@ def main(fo):
         elif source[index] == "_" or "a" <= source[index] <= "z" or "A" <= source[index] <= "Z":
             index = kw(source,index)
         index += 1
+    ## 将分析结果输出到控制台 并存入文件 ./output/lexer.txt
+    out_lexer = open("./output/lexer.txt","w")
     for index in range(len(tokens)):
-        print("("+tokens[index].getTag()+","+tokens[index].getValue()+")")
+        print("{0} ({1}, {2})".format(t,tokens[index].getTag(),tokens[index].getValue()))
+        print("{0} ({1}, {2})".format(t,tokens[index].getTag(),tokens[index].getValue()),file=out_lexer)
+        t += 1
+    out_lexer.close()
     print("\n\n")
     return tokens

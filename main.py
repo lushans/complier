@@ -20,6 +20,7 @@ if __name__ == "__main__":
         print("ERROR: FILE NOT FOUND!")
         os._exit(0)
     lexer = lexer.main(fo)
+    fo.close()
     parse.main(lexer)
 
 
