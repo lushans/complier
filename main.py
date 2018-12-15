@@ -11,7 +11,6 @@ import parse
 #     args = parser.parse_args()
 #     return args.file
 
-
 if __name__ == "__main__":
     #path = getarg()
     try:

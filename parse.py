@@ -1,4 +1,5 @@
 import lexer
+import os
 
 # 语法分析部分
 
@@ -209,7 +210,8 @@ def main(lexer):
                 j += 1
         elif temp[i] == ";" or temp[i] == ")" or temp[i] == "}" or temp[i] == "=" or temp[i] == "+" or temp[i] == "(" or temp[i] == "<" or temp[i] == ">" or temp[i] == "{":
             if lexer[j].getValue() != temp[i]:
-                print("Error")
+                print("Error:语法分析失败")
+                os._exit(1)
             else:
                 j += 1
         i += 1
